@@ -68,18 +68,17 @@ local Assets = {
 
 local assetfunction = getcustomasset
 
-local getcustomasset = assetfunction and function(Path)
+local getcustomasset = function(Path)
     if not isfile(Path) then
         task.spawn(function()
-             local Success, Data = pcall(game.HttpGet, game, Path:gsub("ignite", "https://raw.githubusercontent.com/ignite/assets"))
-             if Success and Data then writefile(Path, Data) end
+            local Success, Data = pcall(game.HttpGet, game, Path:gsub("ignite", "https://raw.githubusercontent.com/ignite/assets"))
+            if Success and Data then
+                writefile(Path, Data)
+            end
         end)
-
         return Assets[Path] or ""
     end
-    return assetfunction(Path)
-end or function(Path)
-    return Assets[Path]
+    return assetfunction and assetfunction(Path) or Assets[Path]
 end
 
 function Library:Unload()
