@@ -66,20 +66,18 @@ local Assets = {
     ["ignite/assets/transparency.png"] = "rbxassetid://105632977311596",
 }
 
-local assetfunction = getcustomasset
-
-local getcustomasset = assetfunction and function(Path)
+local function fetchAsset(Path)
     if not isfile(Path) then
         task.spawn(function()
-             local Success, Data = pcall(game.HttpGet, game, Path:gsub("ignite", "https://raw.githubusercontent.com/ignite/assets"))
-             if Success and Data then writefile(Path, Data) end
+            local Success, Data = pcall(game.HttpGet, game, Path:gsub("ignite", "https://raw.githubusercontent.com/ignite/assets"))
+            if Success and Data then
+                writefile(Path, Data)
+            end
         end)
-
+        return Assets[Path] or ""
+    else
         return Assets[Path] or ""
     end
-    return assetfunction(Path)
-end or function(Path)
-    return Assets[Path]
 end
 
 function Library:Unload()
