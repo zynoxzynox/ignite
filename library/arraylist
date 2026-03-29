@@ -1,0 +1,35 @@
+local arraylist = {}
+
+function arraylist.new(config)
+    local screenGui = Instance.new("ScreenGui", game.CoreGui)
+    local mainFrame = Instance.new("Frame", screenGui)
+    mainFrame.BackgroundTransparency = 1
+    mainFrame.Position = UDim2.new(0, 50, 0, 50)
+    
+    local layout = Instance.new("UIListLayout", mainFrame)
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    layout.SortOrder = Enum.SortOrder.LayoutOrder
+
+    return {
+        add = function(text, settings)
+            local labelFrame = Instance.new("Frame", mainFrame)
+            labelFrame.Size = UDim2.new(0, 100, 0, 25) -- Auto-size based on text later
+            labelFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+            
+            -- The orange side-bar from your image
+            local accent = Instance.new("Frame", labelFrame)
+            accent.Size = UDim2.new(0, 2, 1, 0)
+            accent.BackgroundColor3 = settings.Color
+            
+            local txt = Instance.new("TextLabel", labelFrame)
+            txt.Text = text
+            txt.TextColor3 = settings.Color
+            txt.Position = UDim2.new(0, 5, 0, 0)
+            txt.Size = UDim2.new(1, -5, 1, 0)
+            txt.BackgroundTransparency = 1
+            txt.Font = config.Font
+        end
+    }
+end
+
+return arraylist
