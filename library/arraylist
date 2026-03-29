@@ -7,8 +7,9 @@ function library.new(config)
     screenGui.Name = "ArrayList_System"
     
     local container = Instance.new("Frame", screenGui)
-    container.Size = UDim2.new(0.3, 0, 1, 0)
-    container.Position = UDim2.new(0.7, -20, 0, 20)
+    container.Size = UDim2.new(0, 250, 1, 0)
+    container.Position = UDim2.new(1, -10, 0, 10)
+    container.AnchorPoint = Vector2.new(1, 0)
     container.BackgroundTransparency = 1
     
     local layout = Instance.new("UIListLayout", container)
@@ -17,25 +18,26 @@ function library.new(config)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
 
     return {
-        add = function(name, color, isRainbow)
+        add = function(name)
             local label = Instance.new("TextLabel", container)
             label.Name = name
             label.Text = name
             label.Font = config.Font or Enum.Font.Inter
             label.TextSize = config.FontSize or 20
-            label.TextColor3 = color or Color3.new(1,1,1)
             label.BackgroundTransparency = 1
             label.TextXAlignment = Enum.TextXAlignment.Right
             
             local size = TextService:GetTextSize(name, label.TextSize, label.Font, Vector2.new(1000, 1000))
-            label.Size = UDim2.new(0, size.X + 10, 0, size.Y)
+            label.Size = UDim2.new(0, size.X, 0, size.Y)
             label.LayoutOrder = -size.X 
             
-            if isRainbow then
+            if config.Rainbow then
                 RunService.RenderStepped:Connect(function()
                     local hue = (tick() % 5 / 5)
                     label.TextColor3 = Color3.fromHSV(hue, 0.8, 1)
                 end)
+            else
+                label.TextColor3 = config.MainColor or Color3.new(1,1,1)
             end
         end
     }
