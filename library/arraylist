@@ -1,35 +1,40 @@
-local arraylist = {}
+local library = {}
+local TextService = game:GetService("TextService")
 
-function arraylist.new(config)
+function library.new(config)
     local screenGui = Instance.new("ScreenGui", game.CoreGui)
-    local mainFrame = Instance.new("Frame", screenGui)
-    mainFrame.BackgroundTransparency = 1
-    mainFrame.Position = UDim2.new(0, 50, 0, 50)
     
-    local layout = Instance.new("UIListLayout", mainFrame)
-    layout.HorizontalAlignment = Enum.HorizontalAlignment.Left
+    local container = Instance.new("Frame", screenGui)
+    container.Size = UDim2.new(0.2, 0, 1, 0)
+    container.Position = UDim2.new(0.8, -20, 0, 20) -- Aligned Right
+    container.BackgroundTransparency = 1
+    
+    local layout = Instance.new("UIListLayout", container)
+    layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
+    layout.VerticalAlignment = Enum.VerticalAlignment.Top
+    layout.Padding = UDim.new(0, config.Padding)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
 
     return {
-        add = function(text, settings)
-            local labelFrame = Instance.new("Frame", mainFrame)
-            labelFrame.Size = UDim2.new(0, 100, 0, 25) -- Auto-size based on text later
-            labelFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+        add = function(name, color)
+            local label = Instance.new("TextLabel", container)
+            label.Name = name
+            label.Text = name
+            label.Font = config.Font
+            label.TextSize = config.FontSize
+            label.TextColor3 = color
+            label.BackgroundTransparency = 1
+            label.TextXAlignment = Enum.TextXAlignment.Right
             
-            -- The orange side-bar from your image
-            local accent = Instance.new("Frame", labelFrame)
-            accent.Size = UDim2.new(0, 2, 1, 0)
-            accent.BackgroundColor3 = settings.Color
+            local size = TextService:GetTextSize(name, config.FontSize, config.Font, Vector2.new(1000, 1000))
+            label.Size = UDim2.new(0, size.X, 0, size.Y)
             
-            local txt = Instance.new("TextLabel", labelFrame)
-            txt.Text = text
-            txt.TextColor3 = settings.Color
-            txt.Position = UDim2.new(0, 5, 0, 0)
-            txt.Size = UDim2.new(1, -5, 1, 0)
-            txt.BackgroundTransparency = 1
-            txt.Font = config.Font
+            label.LayoutOrder = -size.X 
+            
+            label.TextStrokeTransparency = 0.8
+            label.TextStrokeColor3 = Color3.new(0,0,0)
         end
     }
 end
 
-return arraylist
+return library
