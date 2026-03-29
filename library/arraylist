@@ -8,13 +8,14 @@ function library.new(config)
     
     local container = Instance.new("Frame", screenGui)
     container.Size = UDim2.new(0, 250, 1, 0)
-    container.Position = UDim2.new(1, -10, 0, 10)
+    container.Position = UDim2.new(1, 0, 0, 0)
     container.AnchorPoint = Vector2.new(1, 0)
     container.BackgroundTransparency = 1
     
     local layout = Instance.new("UIListLayout", container)
     layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-    layout.Padding = UDim.new(0, config.Padding or 2)
+    layout.VerticalAlignment = Enum.VerticalAlignment.Top
+    layout.Padding = UDim.new(0, config.Padding or 0)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
 
     return {
