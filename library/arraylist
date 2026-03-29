@@ -1,38 +1,42 @@
 local library = {}
 local TextService = game:GetService("TextService")
+local RunService = game:GetService("RunService")
 
 function library.new(config)
     local screenGui = Instance.new("ScreenGui", game.CoreGui)
+    screenGui.Name = "ArrayList_System"
     
     local container = Instance.new("Frame", screenGui)
-    container.Size = UDim2.new(0.2, 0, 1, 0)
-    container.Position = UDim2.new(0.8, -20, 0, 20) -- Aligned Right
+    container.Size = UDim2.new(0.3, 0, 1, 0)
+    container.Position = UDim2.new(0.7, -20, 0, 20)
     container.BackgroundTransparency = 1
     
     local layout = Instance.new("UIListLayout", container)
     layout.HorizontalAlignment = Enum.HorizontalAlignment.Right
-    layout.VerticalAlignment = Enum.VerticalAlignment.Top
-    layout.Padding = UDim.new(0, config.Padding)
+    layout.Padding = UDim.new(0, config.Padding or 2)
     layout.SortOrder = Enum.SortOrder.LayoutOrder
 
     return {
-        add = function(name, color)
+        add = function(name, color, isRainbow)
             local label = Instance.new("TextLabel", container)
             label.Name = name
             label.Text = name
-            label.Font = config.Font
-            label.TextSize = config.FontSize
-            label.TextColor3 = color
+            label.Font = config.Font or Enum.Font.Inter
+            label.TextSize = config.FontSize or 20
+            label.TextColor3 = color or Color3.new(1,1,1)
             label.BackgroundTransparency = 1
             label.TextXAlignment = Enum.TextXAlignment.Right
             
-            local size = TextService:GetTextSize(name, config.FontSize, config.Font, Vector2.new(1000, 1000))
-            label.Size = UDim2.new(0, size.X, 0, size.Y)
-            
+            local size = TextService:GetTextSize(name, label.TextSize, label.Font, Vector2.new(1000, 1000))
+            label.Size = UDim2.new(0, size.X + 10, 0, size.Y)
             label.LayoutOrder = -size.X 
             
-            label.TextStrokeTransparency = 0.8
-            label.TextStrokeColor3 = Color3.new(0,0,0)
+            if isRainbow then
+                RunService.RenderStepped:Connect(function()
+                    local hue = (tick() % 5 / 5)
+                    label.TextColor3 = Color3.fromHSV(hue, 0.8, 1)
+                end)
+            end
         end
     }
 end
