@@ -46,3 +46,13 @@ function library.new(config)
 end
 
 return library
+
+--local UI = ArrayList.new({
+    --Font = Enum.Font.Gotham,
+    --TextSize = 25,
+    --Padding = 0,
+    --MainColor = Color3.fromRGB(255, 255, 255),
+   -- Rainbow = true
+--})
+
+--UI.add("text")
