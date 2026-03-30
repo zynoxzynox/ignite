@@ -78,3 +78,17 @@ function library.new(config)
 end
 
 return library
+
+
+--local ArrayList = loadstring(game:HttpGet("https://raw.githubusercontent.com/zynoxzynox/ignite/refs/heads/main/library/arraylist"))()
+
+--local UI = ArrayList.new({
+    --Font = Enum.Font.Gotham,
+    --TextSize = 20,
+    --Padding = 2,
+    --Rainbow = true
+--})
+
+--UI.remove("ESP")
+--UI.add("ESP")
+--UI.add("ESP")
