@@ -1,5 +1,5 @@
-if shared.igniteLibrary then shared.igniteLibrary:Unload() end
-local StartTime = shared.igniteDebug and os.clock()
+if shared.ratfunLibrary then shared.ratfunLibrary:Unload() end
+local StartTime = shared.ratfunDebug and os.clock()
 
 --// Initialization 
 local cloneref = cloneref or function(...) return ... end 
@@ -37,10 +37,10 @@ local Library = {
     KeepInBounds = true,
 
     TextColor = Color3.fromRGB(240, 240, 240),
-    MainColor = Color3.fromRGB(20, 20, 20),
+    MainColor = Color3.fromRGB(0, 0, 0),
     BackgroundColor = Color3.fromRGB(15, 15, 15),
     StrokeColor = Color3.fromRGB(50, 50, 50),
-    AccentColor = Color3.fromRGB(202, 47, 0),
+    AccentColor = Color3.fromRGB(138, 28, 138),
     DeselectedColor = Color3.fromRGB(180, 180, 180),
 
     Black = Color3.new(0, 0, 0),
@@ -54,16 +54,16 @@ local Library = {
     ScreenGui = ScreenGui
 }
 
-for _, Folder in next, {"ignite", "ignite/configs", "ignite/assets"} do
+for _, Folder in next, {"rat.fun", "rat.fun/configs", "rat.fun/assets"} do
     if not isfolder(Folder) then
         makefolder(Folder)
     end
 end
 
 local Assets = {
-    ["ignite/assets/resize.png"] = "rbxassetid://102131664028298",
-    ["ignite/assets/logo.png"] = "rbxassetid://126144669213418",
-    ["ignite/assets/transparency.png"] = "rbxassetid://105632977311596",
+    ["rat.fun/assets/resize.png"] = "rbxassetid://102131664028298",
+    ["rat.fun/assets/logo.png"] = "rbxassetid://3017873707",
+    ["rat.fun/assets/transparency.png"] = "rbxassetid://105632977311596",
 }
 
 function Library:Unload()
@@ -75,14 +75,16 @@ end
 
 -- // Helper functions
 local function New(ClassName, Properties)
-    local Object = Instance.new(ClassName)
+    local ok, Object = pcall(Instance.new, ClassName)
+    if not ok then return nil end
     if Properties then for Property, Value in next, Properties do
-        Object[Property] = Value
+        pcall(function() Object[Property] = Value end)
     end end
     return Object
 end
 
 local function Connect(Signal, Callback)
+    if not Signal then return end
     local Connection = Signal:Connect(Callback)
     table.insert(Library.Connections, Connection)
     return Connection
@@ -117,13 +119,17 @@ end
 
 function Library:UpdateColors()
     Library.DarkerAccentColor = ModifyBrightness(Library.AccentColor, -0.185)
-    local Text = `ig{ColorText("nite", Library.AccentColor)}<font color="#{Library.DeselectedColor:ToHex()}"> v{Library.Version}</font>`
-    Library.Title.Text = Text
-    Library.Watermark.Text = Text
+    local Text = `rat{ColorText(".fun", Library.AccentColor)}<font color="#{Library.DeselectedColor:ToHex()}"> v{Library.Version}</font>`
+    if Library.Title then Library.Title.Text = Text end
+    if Library.Watermark then Library.Watermark.Text = Text end
 
     for Object, Properties in next, Library.Registry do
-        for Property, Color in Properties do
-            Object[Property] = Library[Color] or Color
+        if Object and Properties then
+            for Property, Color in Properties do
+                local ok, err = pcall(function()
+                    Object[Property] = Library[Color] or Color
+                end)
+            end
         end
     end
 end
@@ -135,6 +141,7 @@ Connect(ScreenGui.DescendantRemoving, function(Object)
 end)
 
 local function ApplyStroke(Object, Inner)
+    if not Object then return end
     local Stroke = New("UIStroke", {
         ApplyStrokeMode = Enum.ApplyStrokeMode.Border,
         Color = Inner and Library.AccentColor or Library.Black,
@@ -142,7 +149,7 @@ local function ApplyStroke(Object, Inner)
             BackgroundTransparency = 1,
             Position = Inner and UDim2.fromOffset(1, 1) or UDim2.fromOffset(-1, -1),
             Size = Inner and UDim2.new(1, -2, 1, -2) or UDim2.new(1, 2, 1, 2),
-            ZIndex = Object.ZIndex + 1,
+            ZIndex = (Object.ZIndex or 1) + 1,
             Parent = Object
         })
     })
@@ -269,16 +276,7 @@ local WatermarkFrame = New("Frame", {
 }) ApplyStroke(WatermarkFrame)
 AddToRegistry(WatermarkFrame, {BackgroundColor3 = "BackgroundColor", BorderColor3 = "StrokeColor"})
 
-local WatermarkIcon = New("ImageLabel", {
-    BackgroundTransparency = 1,
-    Position = UDim2.fromOffset(5, 5),
-    Size = UDim2.fromOffset(20, 20),
-    Image = Assets["ignite/assets/logo.png"] or "",
-    ImageColor3 = Library.AccentColor,
-    ZIndex = 7,
-    Parent = WatermarkFrame
-})
-AddToRegistry(WatermarkIcon, {ImageColor3 = "AccentColor"})
+-- Watermark logo removed
 
 local WatermarkTextFrame = New("Frame", {
     BackgroundColor3 = Library.BackgroundColor,
@@ -304,7 +302,7 @@ local WatermarkText = New("TextLabel", {
     TextColor3 = Library.TextColor,
     TextStrokeTransparency = .5,
     RichText = true,
-    Text = `ignite v{Library.Version}`,
+    Text = `rat.fun v{Library.Version}`,
     ZIndex = 8,
     Parent = WatermarkTextFrame
 })
@@ -848,7 +846,7 @@ function Library:Window(Version)
         Position = UDim2.fromScale(1, 1),
         BackgroundTransparency = 1,
         ImageColor3 = Library.StrokeColor,
-        Image = Assets["ignite/assets/resize.png"] or "",
+        Image = Assets["rat.fun/assets/resize.png"] or "",
         Size = UDim2.fromOffset(12, 12),
         Parent = WindowFrame
     })
@@ -906,7 +904,7 @@ function Library:Window(Version)
         TextColor3 = Library.TextColor,
         TextSize = 14,
         RichText = true,
-        Text = `ig{ColorText("nite", Library.AccentColor)}<font color="#{Library.DeselectedColor:ToHex()}"> v{Version}</font>`,
+        Text = `rat{ColorText(".fun", Library.AccentColor)}<font color="#{Library.DeselectedColor:ToHex()}"> v{Version}</font>`,
         Parent = TitleFrame
     }) Title.Size = UDim2.new(0, Title.TextBounds.X, 1, 0)
 
@@ -1695,9 +1693,9 @@ function Library:ConfigManager(Window)
     local UISection = SettingsTab:Section("interface")
     local ConfigSection = SettingsTab:Section("configuration")
     local ColorSection = SettingsTab:Section("color")
-    if not isfolder(`ignite/configs/{game.PlaceId}`) then makefolder(`ignite/configs/{game.PlaceId}`) end
-    local ConfigFolder = `ignite/configs/{game.PlaceId}`
-    local AutoloadPath = `ignite/configs/{game.PlaceId}/autoload.txt`
+    if not isfolder(`rat.fun/configs/{game.PlaceId}`) then makefolder(`rat.fun/configs/{game.PlaceId}`) end
+    local ConfigFolder = `rat.fun/configs/{game.PlaceId}`
+    local AutoloadPath = `rat.fun/configs/{game.PlaceId}/autoload.txt`
     local CurrentConfigName = ""
     local SelectedConfig = nil
     
@@ -1875,6 +1873,6 @@ function Library:ConfigManager(Window)
     
 end
 
-if shared.igniteDebug then Library:Notify(string.format("Loaded in %.2f seconds!", os.clock() - StartTime), "Success") end
-shared.igniteLibrary = Library
+if shared.ratfunDebug then Library:Notify(string.format("Loaded in %.2f seconds!", os.clock() - StartTime), "Success") end
+shared.ratfunLibrary = Library
 return Library
